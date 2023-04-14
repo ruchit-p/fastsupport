@@ -1,6 +1,8 @@
 import clsx from 'clsx'
 import Balancer from 'react-wrap-balancer'
 
+
+
 // wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
 const BalancerWrapper = (props: any) => <Balancer {...props} />
 
@@ -42,39 +44,60 @@ const convertNewLines = (text: string) =>
     </span>
   ))
 
+const wrapCode = (text: string) => {
+  const codeRegex = /`([^`]+)`/g;
+  const parts = text.split(codeRegex);
+
+  return parts.map((part, index) =>
+    index % 2 === 0 ? (
+      part
+    ) : (
+        <div className="bg-gray-100 rounded-lg p-4 my-2">
+      <div className="border border-gray-300 rounded-lg overflow-x-auto">
+        <pre className="p-4">
+          <code className="text-sm font-mono whitespace-pre text-gray-800">{part}</code>
+        </pre>
+      </div>
+    </div>
+    )
+  );
+};
+
+
 export function ChatLine({ role = 'assistant', content }: ChatGPTMessage) {
   if (!content) {
     return null
   }
-  const formatteMessage = convertNewLines(content)
+  const formattedMessage = wrapCode(content).map((part) =>
+  typeof part === "string" ? convertNewLines(part) : part
+);
 
   return (
     <div
-      className={
-        role != 'assistant' ? 'float-right clear-both' : 'float-left clear-both'
-      }
+      className={clsx(
+        "w-full mb-5 px-4 py-5 sm:px-6",
+        role === "assistant"
+          ? "float-left clear-both bg-white rounded-lg shadow-lg ring-1 ring-zinc-100"
+          : "float-right clear-both bg-white rounded-lg shadow-lg ring-1 ring-zinc-100"
+      )}
     >
-      <BalancerWrapper>
-        <div className="float-right mb-5 rounded-lg bg-white px-4 py-5 shadow-lg ring-1 ring-zinc-100 sm:px-6">
-          <div className="flex space-x-3">
-            <div className="flex-1 gap-4">
-              <p className="font-large text-xxl text-gray-900">
-                <a href="#" className="hover:underline">
-                  {role == 'assistant' ? 'AI' : 'You'}
-                </a>
-              </p>
-              <p
-                className={clsx(
-                  'text ',
-                  role == 'assistant' ? 'font-semibold font- ' : 'text-gray-400'
-                )}
-              >
-                {formatteMessage}
-              </p>
-            </div>
-          </div>
+      <div className="flex space-x-3">
+        <div className="flex-1 gap-4">
+          <p className="font-large text-xxl text-gray-900">
+            <a href="#" className="hover:underline">
+              {role === "assistant" ? "AI" : "You"}
+            </a>
+          </p>
+          <p
+            className={clsx(
+              "text",
+              role === "assistant" ? "font-semibold font-" : "text-gray-400"
+            )}
+          >
+            {formattedMessage}
+          </p>
         </div>
-      </BalancerWrapper>
+      </div>
     </div>
-  )
+  );
 }

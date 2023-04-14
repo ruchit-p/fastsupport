@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useRef, useEffect, useState } from 'react';
 import { Button } from './Button'
 import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './chatline'
 import { useCookies } from 'react-cookie'
+
+
 
 const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3'
 
@@ -45,18 +47,38 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
 )
 
 export function Chat() {
+  const [userScrolled, setUserScrolled] = useState(false);
+  const chatContainerRef = useRef(null);
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
+  
 
   useEffect(() => {
-    if (!cookie[COOKIE_NAME]) {
-      // generate a semi random short id
-      const randomId = Math.random().toString(36).substring(7)
-      setCookie(COOKIE_NAME, randomId)
+    const chatContainer = chatContainerRef.current;
+
+    const handleUserScroll = () => {
+      const isScrolledToBottom =
+        chatContainer.scrollHeight - chatContainer.clientHeight <=
+        chatContainer.scrollTop + 1;
+      setUserScrolled(!isScrolledToBottom);
+    };
+
+    chatContainer.addEventListener('scroll', handleUserScroll);
+
+    return () => {
+      chatContainer.removeEventListener('scroll', handleUserScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!userScrolled) {
+      const chatContainer = chatContainerRef.current;
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
-  }, [cookie, setCookie])
+  }, [messages, userScrolled]);
+
 
   // send message to API /api/chat endpoint
   const sendMessage = async (message: string) => {
@@ -114,13 +136,16 @@ export function Chat() {
   }
 
   return (
-    <div className="rounded-2xl border-zinc-100  lg:border lg:p-6">
-      {messages.map(({ content, role }, index) => (
-        <ChatLine key={index} role={role} content={content} />
-      ))}
-
-      {loading && <LoadingChatLine />}
-
+    <div className="rounded-2xl border-zinc-100 lg:border lg:p-6 h-full overflow-y-auto w-full">
+      <div
+        ref={chatContainerRef}
+        className="overflow-y-auto max-h-[70vh] mb-2"
+      >
+        {messages.map(({ content, role }, index) => (
+          <ChatLine key={index} role={role} content={content} />
+        ))}
+        {loading && <LoadingChatLine />}
+      </div>
       {messages.length < 2 && (
         <span className="mx-auto flex flex-grow text-gray-600 clear-both">
           Type a message to start the conversation
@@ -132,5 +157,5 @@ export function Chat() {
         sendMessage={sendMessage}
       />
     </div>
-  )
+  );
 }

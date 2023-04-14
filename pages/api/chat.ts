@@ -1,21 +1,18 @@
-
-console.log("api/chat.ts");
+// pages/api/chat.ts
 import { ChatGPTMessage } from '../components/chatline'
 import { OpenAIStream, OpenAIStreamPayload } from '../../utils/OpenAIStream'
+import { NextApiRequest, NextApiResponse } from 'next'
 
-// break the app if the API key is missing
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing Environment Variable OPENAI_API_KEY')
 }
-
 
 export const config = {
   runtime: 'edge',
 }
 
-const handler = async (req: Request, res: Response): Promise<void> => {
-  console.log('Received request for /api/chat')
-  const body = req.body;
+const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
+  const body = req.body
 
   const messages: ChatGPTMessage[] = [
     {
@@ -32,23 +29,21 @@ const handler = async (req: Request, res: Response): Promise<void> => {
   ]
 
   if (body === undefined) {
-    res.status(400).send({ error:'Bad Request' });
-    return;
+    res.status(400).send({ error: 'Bad Request' })
+    return
   }
   if (body?.messages !== undefined) {
-    messages.push(...body.messages);
+    messages.push(...body.messages)
   } else {
-    res.status(400).send({ error: 'Bad Request: messages property is missing' });
-    return;
+    res.status(400).send({ error: 'Bad Request: messages property is missing' })
+    return
   }
 
   const payload: OpenAIStreamPayload = {
     model: 'gpt-3.5-turbo',
     messages: messages,
     temperature: process.env.AI_TEMP ? parseFloat(process.env.AI_TEMP) : 0.7,
-    max_tokens: process.env.AI_MAX_TOKENS
-      ? parseInt(process.env.AI_MAX_TOKENS)
-      : 100,
+    max_tokens: 400,
     top_p: 1,
     frequency_penalty: 0,
     presence_penalty: 0,
@@ -56,9 +51,30 @@ const handler = async (req: Request, res: Response): Promise<void> => {
     user: body?.user,
     n: 1,
   }
+  console.log('Request payload:', payload);
 
-  const stream = await OpenAIStream(payload)
-  return new Response(stream)
+  try {
+    const responseStream = await OpenAIStream(payload)
+
+    const reader = responseStream.getReader()
+    const decoder = new TextDecoder()
+    let done = false
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read()
+      done = doneReading
+
+      if (value) {
+        const decodedValue = decoder.decode(value, { stream: !done })
+        res.write(decodedValue)
+      }
+    }
+
+    res.end()
+  } catch (error) {
+    console.error('Error streaming OpenAI API response:', error)
+    res.status(500).json({ error: 'Error processing the request' })
+  }
 }
 
 export default handler
