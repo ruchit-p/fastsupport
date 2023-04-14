@@ -1,12 +1,15 @@
-import clsx from 'clsx'
-import Balancer from 'react-wrap-balancer'
-
-
+import clsx from 'clsx';
+import Balancer from 'react-wrap-balancer';
 
 // wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
-const BalancerWrapper = (props: any) => <Balancer {...props} />
+const BalancerWrapper = (props: any) => <Balancer {...props} />;
 
-type ChatGPTAgent = 'user' | 'system' | 'assistant'
+type ChatGPTAgent = 'user' | 'system' | 'assistant';
+
+export interface ChatGPTMessage {
+  role: ChatGPTAgent;
+  content: string;
+}
 
 export interface ChatGPTMessage {
   role: ChatGPTAgent
@@ -52,13 +55,13 @@ const wrapCode = (text: string) => {
     index % 2 === 0 ? (
       part
     ) : (
-        <div className="bg-gray-100 rounded-lg p-4 my-2">
-      <div className="border border-gray-300 rounded-lg overflow-x-auto">
-        <pre className="p-4">
-          <code className="text-sm font-mono whitespace-pre text-gray-800">{part}</code>
-        </pre>
+      <div className="bg-gray-100 rounded-lg p-4 my-2">
+        <div className="border border-gray-300 rounded-lg overflow-x-auto">
+          <pre className="p-4">
+            <code className="text-sm font-mono whitespace-pre-wrap word-wrap break-word text-gray-800">{part}</code>
+          </pre>
+        </div>
       </div>
-    </div>
     )
   );
 };

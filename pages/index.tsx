@@ -1,8 +1,8 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Navbar from './components/navbar';
+
 import {Chat} from './components/chatbot';
-import Footer from './components/footer';
+
 
 
 
@@ -10,8 +10,8 @@ import Footer from './components/footer';
 const Home: NextPage = () => {
   return (
     <>
-      <Navbar />
-      <div className="flex flex-col items-center justify-center w-full">
+      
+      <div className="flex flex-col items-center justify-center w-full h-screen">
         <Head>
           <title>Fast Support</title>
           <link rel="icon" href="/favicon.ico" />
@@ -23,8 +23,8 @@ const Home: NextPage = () => {
           </div>
           </div>
           </div>
-        <Footer />
       </div>
+      
     </>
   )
 };
