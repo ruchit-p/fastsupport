@@ -1,5 +1,5 @@
 // pages/api/chat.ts
-import { ChatGPTMessage } from '../components/chatline'
+import { ChatGPTMessage } from '../../components/chatline'
 import { OpenAIStream, OpenAIStreamPayload } from '../../utils/OpenAIStream'
 import { NextApiRequest, NextApiResponse } from 'next'
 
