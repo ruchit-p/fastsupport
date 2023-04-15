@@ -66,11 +66,14 @@ export function Chat() {
         setUserScrolled(!isScrolledToBottom);
       }
     };
-
-    chatContainer.addEventListener('scroll', handleUserScroll);
+    if (chatContainer) {
+      chatContainer.addEventListener('scroll', handleUserScroll);
+    }
 
     return () => {
-      chatContainer.removeEventListener('scroll', handleUserScroll);
+      if (chatContainer) {
+        chatContainer.removeEventListener('scroll', handleUserScroll);
+      }
     };
   }, []);
 
