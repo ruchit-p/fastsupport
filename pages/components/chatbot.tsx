@@ -59,10 +59,12 @@ export function Chat() {
     const chatContainer = chatContainerRef.current;
 
     const handleUserScroll = () => {
-      const isScrolledToBottom =
-        chatContainer.scrollHeight - chatContainer.clientHeight <=
-        chatContainer.scrollTop + 1;
-      setUserScrolled(!isScrolledToBottom);
+      if (chatContainer) {
+        const isScrolledToBottom =
+          chatContainer.scrollHeight - chatContainer.clientHeight <=
+          chatContainer.scrollTop + 1;
+        setUserScrolled(!isScrolledToBottom);
+      }
     };
 
     chatContainer.addEventListener('scroll', handleUserScroll);
@@ -75,7 +77,9 @@ export function Chat() {
   useEffect(() => {
     if (!userScrolled) {
       const chatContainer = chatContainerRef.current;
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
     }
   }, [messages, userScrolled]);
 
