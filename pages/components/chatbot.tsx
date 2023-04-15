@@ -48,7 +48,7 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
 
 export function Chat() {
   const [userScrolled, setUserScrolled] = useState(false);
-  const chatContainerRef = useRef(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);;
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
