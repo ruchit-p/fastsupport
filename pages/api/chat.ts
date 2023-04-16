@@ -1,3 +1,4 @@
+// pages/api/chat.ts
 import { ChatGPTMessage } from '../../components/chatline'
 import { OpenAIStream, OpenAIStreamPayload } from '../../components/utils/OpenAIStream'
 import { NextApiRequest, NextApiResponse } from 'next'
@@ -5,6 +6,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing Environment Variable OPENAI_API_KEY')
 }
+
 
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const body = req.body
@@ -34,10 +36,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
     return
   }
 
-  const payload: OpenAIStreamPayload = {
+  const payload = {
     model: 'gpt-3.5-turbo',
     messages: messages,
-    temperature: 0.7,
+    temperature: process.env.AI_TEMP ? parseFloat(process.env.AI_TEMP) : 0.7,
     max_tokens: 400,
     top_p: 1,
     frequency_penalty: 0,
