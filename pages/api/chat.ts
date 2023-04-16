@@ -37,7 +37,7 @@ const handler = async (req: NextRequest, res: NextResponse): Promise<void> => {
   const payload: OpenAIStreamPayload = {
     model: 'gpt-3.5-turbo',
     messages: messages,
-    temperature: process.env.AI_TEMP ? parseFloat(process.env.AI_TEMP) : 0.7,
+    temperature: 0.7,
     max_tokens: 400,
     top_p: 1,
     frequency_penalty: 0,
