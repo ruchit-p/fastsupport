@@ -1,6 +1,6 @@
 import { ChatGPTMessage } from '../../components/chatline'
 import { OpenAIStream, OpenAIStreamPayload } from '../../utils/OpenAIStream'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextRequest, NextResponse } from 'next/server'
 
 if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing Environment Variable OPENAI_API_KEY')
@@ -10,7 +10,7 @@ export const config = {
   runtime: 'edge',
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
+const handler = async (req: NextRequest, res: NextResponse): Promise<void> => {
   const body = req.body
 
   const messages: ChatGPTMessage[] = [
