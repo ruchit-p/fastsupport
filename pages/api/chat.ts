@@ -24,13 +24,13 @@ const handler = async (req: NextRequest, res: NextResponse): Promise<void> => {
   ]
 
   if (body === undefined) {
-    res.status(400).send({ error: 'Bad Request' })
+    res.status(400).json({ error: 'Bad Request' })
     return
   }
   if (body?.messages !== undefined) {
     messages.push(...body.messages)
   } else {
-    res.status(400).send({ error: 'Bad Request: messages property is missing' })
+    res.status(400).json({ error: 'Bad Request: messages property is missing' })
     return
   }
 
