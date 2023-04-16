@@ -7,9 +7,6 @@ if (!process.env.OPENAI_API_KEY) {
   throw new Error('Missing Environment Variable OPENAI_API_KEY')
 }
 
-export const config = {
-  runtime: 'edge',
-}
 
 const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   const body = req.body
@@ -29,13 +26,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse): Promise<void>
   ]
 
   if (body === undefined) {
-    res.status(400).send({ error: 'Bad Request' })
+    res.status(400).json({ error: 'Bad Request' })
     return
   }
   if (body?.messages !== undefined) {
     messages.push(...body.messages)
   } else {
-    res.status(400).send({ error: 'Bad Request: messages property is missing' })
+    res.status(400).json({ error: 'Bad Request: messages property is missing' })
     return
   }
 
