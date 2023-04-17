@@ -2,10 +2,10 @@ import { useRef, useEffect, useState } from 'react';
 import { Button } from './Button'
 import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './chatline'
 import { useCookies } from 'react-cookie'
+import { OpenAIStream, OpenAIStreamPayload } from './utils/OpenAIStream';
 
 
-
-const COOKIE_NAME = 'nextjs-example-ai-chat-gpt3'
+const COOKIE_NAME = 'fastsupport'
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages: ChatGPTMessage[] = [
@@ -14,6 +14,8 @@ export const initialMessages: ChatGPTMessage[] = [
     content: 'Hi! I am a friendly AI assistant. Ask me anything!',
   },
 ]
+
+
 
 const InputMessage = ({ input, setInput, sendMessage }: any) => (
   <div className="mt-6 flex clear-both">
@@ -53,7 +55,6 @@ export function Chat() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [cookie, setCookie] = useCookies([COOKIE_NAME])
-  
 
   useEffect(() => {
     const chatContainer = chatContainerRef.current;
@@ -85,6 +86,7 @@ export function Chat() {
       }
     }
   }, [messages, userScrolled]);
+  
 
 
   // send message to API /api/chat endpoint
@@ -166,3 +168,6 @@ export function Chat() {
     </div>
   );
 }
+
+
+
